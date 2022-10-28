@@ -39,16 +39,6 @@ with open("./lakes.csv", 'r') as file:
     csvreader = csv.reader(file)
     lakes = list(csvreader)
 
-# return latitude index
-def get_idx_lat(lat):
-    idx_lat = round(2 * (89.75 - float(lat)))
-    return idx_lat
-
-# return longitude index
-def get_idx_lon(lon):
-    idx_lon = round(2 * (float(lon) + 179.75))
-    return idx_lon
-
 # return available time periods of our daily data chunked to decades
 def get_periods(path):
     files = sorted(fnmatch.filter(os.listdir(path), '*_tas_*'))
@@ -92,8 +82,8 @@ for period in get_periods(path):
         outfile = args.model.lower() + '_' + args.climforcing + '_' + args.datatype + '_' + \
                   lake[0].replace(' ', '-').lower() + '_daily_' + first_year + '_' + last_year + '.txt'
 
-        idx_lat = get_idx_lat(lake[1])
-        idx_lon = get_idx_lon(lake[2])
+        idx_lat = round(2 * (89.75 - float(lake[1])))
+        idx_lon = round(2 * (float(lake[2]) + 179.75))
 
         # read actual data from NetCDF
         print('   read tas ...')
@@ -131,6 +121,7 @@ for period in get_periods(path):
 
         # breal after first lake for faster debugging
         break
+    break
 
     tas_ds.close()
     hurs_ds.close()
