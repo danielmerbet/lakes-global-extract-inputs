@@ -1,11 +1,11 @@
 #!/p/system/packages/anaconda/5.0.0_py3/bin/python3.6
 # run with Python 3.6
 
-from netCDF4 import Dataset, num2date
 import argparse
 import os
 import fnmatch
 import pandas as pd
+import xarray as xr
 from pathlib import Path
 
 parser = argparse.ArgumentParser(description='Extract climate data for local lakes sector.')
@@ -61,19 +61,13 @@ for period in get_periods(path):
     # sfcwind_file = [file for file in fnmatch.filter(os.listdir(path), '*_sfcwind_*') if period in file][0]
 
     # open datasets
-    tas_ds = Dataset(path + '/' + tas_file)
-    hurs_ds = Dataset(path + '/' + hurs_file)
-    # pr_ds = Dataset(path + '/' + pr_file)
-    # rsds_ds = Dataset(path + '/' + rsds_file)
-    # rlds_ds = Dataset(path + '/' + rlds_file)
-    # ps_ds = Dataset(path + '/' + ps_file)
-    # sfcwind_ds = Dataset(path + '/' + sfcwind_file)
-
-    # get dates
-    times = tas_ds.variables['time']
-    time_units = times.units
-    time_calendar = times.calendar
-    dates = num2date(times[:], units=time_units, calendar=time_calendar)
+    tas_ds = xr.load_dataset(path + '/' + tas_file)
+    hurs_ds = xr.load_dataset(path + '/' + hurs_file)
+    # pr_ds = xr.load_dataset(path + '/' + pr_file)
+    # rsds_ds = xr.load_dataset(path + '/' + rsds_file)
+    # rlds_ds = xr.load_dataset(path + '/' + rlds_file)
+    # ps_ds = xr.load_dataset(path + '/' + ps_file)
+    # sfcwind_ds = xr.load_dataset(path + '/' + sfcwind_file)
 
     # iterate over lakes
     for index, lake in lakes_df.iterrows():
@@ -82,51 +76,36 @@ for period in get_periods(path):
         outfile = args.model.lower() + '_' + args.climforcing + '_' + args.datatype + '_' + \
             lake[0].replace(' ', '-').lower() + '_daily_' + first_year + '_' + last_year + '.csv'
 
-        idx_lat = round(2 * (89.75 - float(lake[1])))
-        idx_lon = round(2 * (float(lake[2]) + 179.75))
-
         # read actual data from NetCDF
         print('   read tas ...')
-        tas_lake = tas_ds['tas'][:, idx_lat, idx_lon]
+        tas_lake = tas_ds.sel(lat=lake[1], lon=lake[2], method='nearest')
         print('   read hurs ...')
-        hurs_lake = hurs_ds['hurs'][:, idx_lat, idx_lon]
-        # print('   read pr ...')
-        # pr_lake = pr_ds['pr'][:, idx_lat, idx_lon]
+        hurs_lake = hurs_ds.sel(lat=lake[1], lon=lake[2], method='nearest')
+        print('   read pr ...')
+        # pr_lake = pr_ds.sel(lat=lake[1], lon=lake[2], method='nearest')
         # print('   read rsds ...')
-        # rsds_lake = rsds_ds['rsds'][:, idx_lat, idx_lon]
+        # rsds_lake = rsds_ds.sel(lat=lake[1], lon=lake[2], method='nearest')
         # print('   read rlds ...')
-        # rlds_lake = rlds_ds['rlds'][:, idx_lat, idx_lon]
+        # rlds_lake = rlds_ds.sel(lat=lake[1], lon=lake[2], method='nearest')
         # print('   read ps ...')
-        # ps_lake = ps_ds['ps'][:, idx_lat, idx_lon]
+        # ps_lake = ps_ds.sel(lat=lake[1], lon=lake[2], method='nearest')
         # print('   read sfcwind ...')
-        # sfcwind_lake = sfcwind_ds['sfcwind'][:, idx_lat, idx_lon]
-
-        lake_data = pd.DataFrame({
-            'date': dates[:],
-            'tas': tas_lake[:],
-            'hurs': hurs_lake[:],
-            # 'pr': pr_lake[:],
-            # 'rsds': rsds_lake[:],
-            # 'rlds': rlds_lake[:],
-            # 'ps': ps_lake[:],
-            # 'sfcwind': sfcwind_lake[:]
-        })
+        # sfcwind_lake = sfcwind_ds.sel(lat=lake[1], lon=lake[2], method='nearest')
 
         # write csv files per lake
         print('   write data ...')
+        lake_data = tas_lake.to_dataframe()
+        lake_data['hurs'] = hurs_lake['hurs']
+        # lake_data['pr'] = hurs_lake['pr']
+        # lake_data['rsds'] = hurs_lake['rsds']
+        # lake_data['rlds'] = hurs_lake['rlds']
+        # lake_data['ps'] = hurs_lake['ps']
+        # lake_data['sfcwind'] = hurs_lake['sfcwind']
         if period.split('_')[0] == first_year:
-            lake_data.to_csv(outpath / outfile, encoding='utf-8', float_format='%.1f', index=False)
+            lake_data.to_csv(outpath / outfile)
         else:
-            lake_data.to_csv(outpath / outfile, encoding='utf-8', float_format='%.1f', index=False, mode='a', header=False)
+            lake_data.to_csv(outpath / outfile, mode='a', header=False)
 
-        # breal after first lake for faster debugging
+        # break after first lake for faster debugging
         # break
     break
-
-    tas_ds.close()
-    hurs_ds.close()
-    # pr_ds.close()
-    # rsds_ds.close()
-    # rlds_ds.close()
-    # ps_ds.close()
-    # sfcwind_ds.close()

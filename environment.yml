@@ -1,0 +1,6 @@
+# conda env create -f environment.yml
+name: isimip_lakes
+dependencies:
+- netcdf4
+- pandas
+- xarray
