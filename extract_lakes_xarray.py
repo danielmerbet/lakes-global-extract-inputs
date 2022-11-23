@@ -76,7 +76,7 @@ for period in get_periods(path):
         print('  {1}, lat:{2} lon:{3}'.format(*lake))
 
         outfile = args.model.lower() + '_' + args.climforcing + '_' + args.datatype + '_' + \
-            lake[0].replace(' ', '-').lower() + '_daily_' + first_year + '_' + last_year + '.csv'
+            lake[1].replace(' ', '-').lower() + '_daily_' + first_year + '_' + last_year + '.csv'
 
         # read actual data from NetCDF
         print('   read tas ...')
@@ -99,11 +99,11 @@ for period in get_periods(path):
 
         lake_data = tas_lake.to_dataframe()
         lake_data['hurs'] = hurs_lake['hurs']
-        lake_data['pr'] = hurs_lake['pr']
-        lake_data['rsds'] = hurs_lake['rsds']
-        lake_data['rlds'] = hurs_lake['rlds']
-        lake_data['ps'] = hurs_lake['ps']
-        lake_data['sfcwind'] = hurs_lake['sfcwind']
+        lake_data['pr'] = pr_lake['pr']
+        lake_data['rsds'] = rsds_lake['rsds']
+        lake_data['rlds'] = rlds_lake['rlds']
+        lake_data['ps'] = ps_lake['ps']
+        lake_data['sfcwind'] = sfcwind_lake['sfcwind']
 
         if period.split('_')[0] == first_year:
             lake_data.to_csv(outpath / outfile)
