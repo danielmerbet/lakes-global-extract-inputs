@@ -107,7 +107,3 @@ for period in get_periods(path):
             lake_data.to_csv(outpath / outfile)
         else:
             lake_data.to_csv(outpath / outfile, mode='a', header=False)
-
-        # break after first lake for faster debugging
-        # break
-    break
