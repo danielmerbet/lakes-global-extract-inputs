@@ -10,6 +10,9 @@ from pathlib import Path
 
 parser = argparse.ArgumentParser(description='Extract climate data for local lakes sector.')
 
+parser.add_argument('-f', '--lakes-file', dest='lakes_file',
+                    default='lakes.csv',
+                    help='CSV file with lake long name, specifier, latitude and longitude.')
 parser.add_argument('-p', '--phase', dest='phase', required=True,
                     default='ISIMIP3a',
                     help='ISIMIP phase.')
@@ -34,7 +37,7 @@ path = args.basedir + '/' + args.phase + '/InputData/climate/atmosphere/' \
 
 outpath = Path(args.outdir)
 
-lakes_df = pd.read_csv('lakes.csv')
+lakes_df = pd.read_csv(args.lakes_file)
 
 
 # return available time periods of our daily data chunked to decades
@@ -70,26 +73,26 @@ for period in get_periods(path):
 
     # iterate over lakes
     for index, lake in lakes_df.iterrows():
-        print('{0} (lat:{1} lon:{2})'.format(*lake))
+        print('  {1}, lat:{2} lon:{3}'.format(*lake))
 
         outfile = args.model.lower() + '_' + args.climforcing + '_' + args.datatype + '_' + \
             lake[0].replace(' ', '-').lower() + '_daily_' + first_year + '_' + last_year + '.csv'
 
         # read actual data from NetCDF
         print('   read tas ...')
-        tas_lake = tas_ds.sel(lat=lake[1], lon=lake[2], method='nearest')
+        tas_lake = tas_ds.sel(lat=lake[2], lon=lake[3], method='nearest')
         print('   read hurs ...')
-        hurs_lake = hurs_ds.sel(lat=lake[1], lon=lake[2], method='nearest')
+        hurs_lake = hurs_ds.sel(lat=lake[2], lon=lake[3], method='nearest')
         print('   read pr ...')
-        pr_lake = pr_ds.sel(lat=lake[1], lon=lake[2], method='nearest')
+        pr_lake = pr_ds.sel(lat=lake[2], lon=lake[3], method='nearest')
         print('   read rsds ...')
-        rsds_lake = rsds_ds.sel(lat=lake[1], lon=lake[2], method='nearest')
+        rsds_lake = rsds_ds.sel(lat=lake[2], lon=lake[3], method='nearest')
         print('   read rlds ...')
-        rlds_lake = rlds_ds.sel(lat=lake[1], lon=lake[2], method='nearest')
+        rlds_lake = rlds_ds.sel(lat=lake[2], lon=lake[3], method='nearest')
         print('   read ps ...')
-        ps_lake = ps_ds.sel(lat=lake[1], lon=lake[2], method='nearest')
+        ps_lake = ps_ds.sel(lat=lake[2], lon=lake[3], method='nearest')
         print('   read sfcwind ...')
-        sfcwind_lake = sfcwind_ds.sel(lat=lake[1], lon=lake[2], method='nearest')
+        sfcwind_lake = sfcwind_ds.sel(lat=lake[2], lon=lake[3], method='nearest')
 
         # write csv files per lake
         print('   write data ...')
