@@ -28,7 +28,6 @@ parser.add_argument('-o', '--out', dest='outdir',
 
 
 args = parser.parse_args()
-ref_year_isimip = 1901
 
 path = args.basedir + '/' + args.phase + '/InputData/climate/atmosphere/' \
        + args.datatype + '/global/daily/' + '/' + args.climforcing + '/' + args.model
