@@ -109,3 +109,11 @@ for period in get_periods(path):
             lake_data.to_csv(outpath / outfile)
         else:
             lake_data.to_csv(outpath / outfile, mode='a', header=False)
+
+    tas_ds.close()
+    hurs_ds.close()
+    pr_ds.close()
+    rsds_ds.close()
+    rlds_ds.close()
+    ps_ds.close()
+    sfcwind_ds.close()
