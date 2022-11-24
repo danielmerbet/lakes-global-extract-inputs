@@ -84,6 +84,7 @@ for period in get_periods(path):
         # read actual data from NetCDF
         print('   read tas ...')
         tas_lake = tas_ds.sel(lat=lake[2], lon=lake[3], method='nearest', drop=True)
+        tas_lake['time'] = tas_lake['time'].dt.strftime("%Y-%m-%d")
         print('   read hurs ...')
         hurs_lake = hurs_ds.sel(lat=lake[2], lon=lake[3], method='nearest', drop=True)
         print('   read pr ...')
