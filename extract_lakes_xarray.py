@@ -16,7 +16,10 @@ parser.add_argument('-f', '--lakes-file', dest='lakes_file',
 parser.add_argument('-p', '--phase', dest='phase', required=True,
                     default='ISIMIP3a',
                     help='ISIMIP phase.')
-parser.add_argument('-t', '--datatype', dest='datatype', required=True,
+parser.add_argument('-t', '--tier', dest='tier', required=True,
+                    default='InputData',
+                    help='ISIMIP Input data tier, e.g. [InputData|SecondaryInputData]')
+parser.add_argument('-d', '--datatype', dest='datatype', required=True,
                     help='Input data types, e.g. 3a: [obsclim|counterclim], 3b: [bias-corrected]')
 parser.add_argument('-m', '--model', dest='model', required=True,
                     help='Input model to process')
@@ -32,7 +35,7 @@ parser.add_argument('-o', '--out', dest='outdir',
 
 args = parser.parse_args()
 
-path = args.basedir + '/' + args.phase + '/InputData/climate/atmosphere/' \
+path = args.basedir + '/' + args.phase + '/' + args.tier + '/climate/atmosphere/' \
        + args.datatype + '/global/daily/' + '/' + args.climforcing + '/' + args.model
 
 outpath = Path(args.outdir)
