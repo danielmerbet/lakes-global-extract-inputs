@@ -80,19 +80,19 @@ for period in get_periods(path):
 
         # read actual data from NetCDF
         print('   read tas ...')
-        tas_lake = tas_ds.sel(lat=lake[2], lon=lake[3], method='nearest')
+        tas_lake = tas_ds.sel(lat=lake[2], lon=lake[3], method='nearest', drop=True)
         print('   read hurs ...')
-        hurs_lake = hurs_ds.sel(lat=lake[2], lon=lake[3], method='nearest')
+        hurs_lake = hurs_ds.sel(lat=lake[2], lon=lake[3], method='nearest', drop=True)
         print('   read pr ...')
-        pr_lake = pr_ds.sel(lat=lake[2], lon=lake[3], method='nearest')
+        pr_lake = pr_ds.sel(lat=lake[2], lon=lake[3], method='nearest', drop=True)
         print('   read rsds ...')
-        rsds_lake = rsds_ds.sel(lat=lake[2], lon=lake[3], method='nearest')
+        rsds_lake = rsds_ds.sel(lat=lake[2], lon=lake[3], method='nearest', drop=True)
         print('   read rlds ...')
-        rlds_lake = rlds_ds.sel(lat=lake[2], lon=lake[3], method='nearest')
+        rlds_lake = rlds_ds.sel(lat=lake[2], lon=lake[3], method='nearest', drop=True)
         print('   read ps ...')
-        ps_lake = ps_ds.sel(lat=lake[2], lon=lake[3], method='nearest')
+        ps_lake = ps_ds.sel(lat=lake[2], lon=lake[3], method='nearest', drop=True)
         print('   read sfcwind ...')
-        sfcwind_lake = sfcwind_ds.sel(lat=lake[2], lon=lake[3], method='nearest')
+        sfcwind_lake = sfcwind_ds.sel(lat=lake[2], lon=lake[3], method='nearest', drop=True)
 
         # write csv files per lake
         print('   write data ...')
